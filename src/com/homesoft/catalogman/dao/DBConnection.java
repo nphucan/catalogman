@@ -5,7 +5,6 @@
  */
 package com.homesoft.catalogman.dao;
 
-import java.io.Console;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
