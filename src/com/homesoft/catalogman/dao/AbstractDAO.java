@@ -33,6 +33,5 @@ public abstract class AbstractDAO {
             iKey = rsGen.getInt(1);
         }
         return iKey;
-    }
-    
+    }    
 }
