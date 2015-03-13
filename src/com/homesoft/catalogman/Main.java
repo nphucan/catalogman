@@ -29,8 +29,8 @@ public class Main {
         try {
             readConfiguration();            
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-            System.out.println(ex.getStackTrace());
+           //System.out.println(ex.getMessage());
+           // System.out.println(ex.getStackTrace());
         }
         // setup look and feel
         try {
