@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Class description here
  */
 package com.homesoft.catalogman.dao;
 
@@ -17,22 +15,22 @@ import java.sql.SQLException;
  */
 public class DBConnection {
 
-    public  static String DB_CONN_STRING;
+    public static String DB_CONN_STRING;
     public static String DB_USER;
     public static String DB_PWD;
     private static Connection conn;
-    
-    public static Connection getConnection() throws SQLException{      
-        if(conn==null){
-            conn=DriverManager.getConnection(DB_CONN_STRING, DB_USER, DB_PWD);            
-        }      
+
+    public static Connection getConnection() throws SQLException {
+        if (conn == null) {
+            conn = DriverManager.getConnection(DB_CONN_STRING, DB_USER, DB_PWD);
+        }
         return conn;
     }
-    
-    public static void Close(){
-        try{
-        conn.close();
-        }catch(SQLException ex){
+
+    public static void Close() {
+        try {
+            conn.close();
+        } catch (SQLException ex) {
             System.out.println(ex.getMessage());
             System.out.println(ex.getStackTrace());
         }
