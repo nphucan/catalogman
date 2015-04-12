@@ -5,17 +5,77 @@
  */
 package com.homesoft.catalogman.gui;
 
+import com.homesoft.catalogman.dao.HmObjectMetaDAO;
+import com.homesoft.catalogman.entity.HmObjectMeta;
+import com.homesoft.catalogman.entity.HmTaxonomy;
+import java.awt.BorderLayout;
+import static java.awt.BorderLayout.LINE_START;
+import static java.awt.BorderLayout.NORTH;
+import java.awt.Checkbox;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import net.miginfocom.swing.MigLayout;
+import org.jdesktop.swingx.JXImageView;
+import org.jdesktop.swingx.JXTitledPanel;
+
 /**
  *
- * @author Admin
+ * @author Thai Bao Nguyen
  */
-public class ObjectMeta_03 extends javax.swing.JPanel {
+public class ObjectMeta_03 extends CustomPanel {
+
+    JLabel[] groupName = new JLabel[100];
+    private HmObjectMeta hmobjectmeta;
+    private HmObjectMetaDAO hmobjectmetadao;
+    private HmTaxonomy hmtaxonomy;
+    private Object object;
+    private int i = 0;
+    int selected = 0;
+    private GridBagConstraints c = new GridBagConstraints();
+    JPanel[] jpanelOption = new JPanel[100];
+    JPanel jpaneltemp = new JPanel(new MigLayout());
+
+    JCheckBox[][] chkbox = new JCheckBox[100][100];
+    JLabel[][] lb = new JLabel[100][100];
+    TextField[][] txtString = new TextField[100][100];
+
+    int containercount = 4;
+    int selectedPanel = 0;
+    int groupcount = 0;
+    int componentcounter = 0;
+    //[j][i]
+    int locateArrayI;
+    int locateArrayJ;
+    JPanel[] jpanelGroup = new JPanel[100];
+    JSeparator separator;
 
     /**
      * Creates new form ObjectMeta
      */
     public ObjectMeta_03() {
         initComponents();
+        jPanel3nen.setLayout(new MigLayout());
+
     }
 
     /**
@@ -28,191 +88,48 @@ public class ObjectMeta_03 extends javax.swing.JPanel {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jSeparator1 = new javax.swing.JSeparator();
-        jLabel4 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-        jButton9 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnAddField = new javax.swing.JButton();
+        btnAddGroup = new javax.swing.JButton();
+        btnMoveUp = new javax.swing.JButton();
+        btnMoveDown = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel3nen = new javax.swing.JPanel();
 
         jPanel1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(204, 204, 204), 1, true));
 
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
-
-        jLabel1.setText("Group1");
-
-        jLabel2.setText("Display Text");
-
-        jLabel3.setText("Display Text");
-
-        jTextField1.setText("Text");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        btnAddField.setLabel("+ Add field");
+        btnAddField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                btnAddFieldActionPerformed(evt);
             }
         });
 
-        jTextField2.setText("Text");
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        btnAddGroup.setLabel("+ Add group");
+        btnAddGroup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                btnAddGroupActionPerformed(evt);
             }
         });
 
-        jLabel4.setText("[Untitled Group]");
-
-        jCheckBox1.setSelected(true);
-
-        jCheckBox2.setSelected(true);
-
-        jCheckBox3.setSelected(true);
-
-        jButton6.setText("No Image");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        btnMoveUp.setLabel("Move up");
+        btnMoveUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                btnMoveUpActionPerformed(evt);
             }
         });
 
-        jButton7.setText("X");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnMoveDown.setLabel("Move down");
+        btnMoveDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnMoveDownActionPerformed(evt);
             }
         });
-
-        jButton8.setText("X");
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 121, Short.MAX_VALUE)
-        );
-
-        jButton9.setText("X");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(55, 55, 55)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton6)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jCheckBox3)
-                            .addComponent(jCheckBox1)
-                            .addComponent(jCheckBox2))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 143, Short.MAX_VALUE)
-                                .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(3, 3, 3))
-                            .addComponent(jSeparator1)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(24, 24, 24)
-                                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(23, 23, 23)
-                                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(37, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(4, 4, 4)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(8, 8, 8)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox2))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(8, 8, 8)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(8, 8, 8)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(6, 6, 6)))
-                .addGap(12, 12, 12)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox3))
-                .addGap(8, 8, 8)
-                .addComponent(jButton6)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        jButton1.setLabel("+ Add field");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setLabel("+ Add group");
-
-        jButton3.setLabel("Move up");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
-
-        jButton4.setLabel("Move down");
 
         jButton5.setLabel("<< OK");
+
+        jPanel3nen.setLayout(new java.awt.BorderLayout());
+        jScrollPane1.setViewportView(jPanel3nen);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -221,32 +138,31 @@ public class ObjectMeta_03 extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(btnAddField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAddGroup, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(btnMoveUp, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+                    .addComponent(btnMoveDown, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(63, 63, 63)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(38, 38, 38)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(8, 8, 8)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(8, 8, 8))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(126, 126, 126)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton5)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnAddField, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addComponent(btnAddGroup, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(126, 126, 126)
+                        .addComponent(btnMoveUp, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(8, 8, 8)
+                        .addComponent(btnMoveDown, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 123, Short.MAX_VALUE)
+                        .addComponent(jButton5)))
                 .addGap(76, 76, 76))
         );
 
@@ -268,53 +184,424 @@ public class ObjectMeta_03 extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void btnAddFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+        //i=0;
+        CustomDialog dlg = new CustomDialog(new DefineField_04(), null, true);
+        dlg.show(null);
+        hmobjectmeta = (HmObjectMeta) dlg.getFormData();
+        i = hmobjectmeta.getDataType();
+        setControlPanel(i);
+    }//GEN-LAST:event_btnAddFieldActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void btnMoveUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveUpActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+        containercount = jPanel3nen.getComponentCount();
+        int locate;
+            String wrap = null;
+            System.out.println("Selected Panel " + selectedPanel);
+            jpaneltemp.removeAll();
+            locate = 0;
+            while (jpanelOption[selectedPanel].getComponentCount() > 0) {
+                if (locate == 1 || locate == 3) {
+                    wrap = "wrap";
+                } else {
+                    if (locate == 2) {
+                        wrap = "skip";
+                    } else {
+                        if (locate == 0) {
+                            wrap = "";
+                        }
+                    }
+                }
+                jpaneltemp.add(jpanelOption[selectedPanel].getComponent(0), wrap);
+                locate++;
+            }
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+            locate = 0;
+            while (jpanelOption[selectedPanel - 1].getComponentCount() > 0) {
+                if (locate == 1 || locate == 3) {
+                    wrap = "wrap";
+                } else {
+                    if (locate == 2) {
+                        wrap = "skip";
+                    } else {
+                        if (locate == 0) {
+                            wrap = "";
+                        }
+                    }
+                }
+                jpanelOption[selectedPanel].add(jpanelOption[selectedPanel - 1].getComponent(0), wrap);
+                locate++;
+            }
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+            locate = 0;
+            while (jpaneltemp.getComponentCount() > 0) {
+                if (locate == 1 || locate == 3) {
+                    wrap = "wrap";
+                } else {
+                    if (locate == 2) {
+                        wrap = "skip";
+                    } else {
+                        if (locate == 0) {
+                            wrap = "";
+                        }
+                    }
+                }
+                jpanelOption[selectedPanel - 1].add(jpaneltemp.getComponent(0), wrap);
+                locate++;
+            }
+            selectedPanel = selectedPanel - 1;
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+            jPanel3nen.revalidate();
+        
+    }//GEN-LAST:event_btnMoveUpActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnAddGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddGroupActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+        CustomDialog dlg = new CustomDialog(new Add_Group(), null, true);
+        dlg.show(null);
+        separator = new JSeparator();
+        separator.setPreferredSize(new Dimension(350, 20));
+        hmtaxonomy = (HmTaxonomy) dlg.getFormData();
+        groupcount = jPanel3nen.getComponentCount();
+        System.out.println("Group count: " + groupcount);
+        jpanelGroup[groupcount] = new JPanel(new MigLayout());
+        groupName[groupcount] = new JLabel();
+        groupName[groupcount].setText(hmtaxonomy.getDescription());
+        jpanelGroup[groupcount].setBackground(Color.red);
+        if (groupcount == 0) {
+            jpanelGroup[groupcount].add(groupName[groupcount], "split2, wrap");
+            jpanelGroup[groupcount].revalidate();
+            jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+            jPanel3nen.repaint();
+            jPanel3nen.revalidate();
+        } else {
+            jpanelGroup[groupcount].add(separator, "wrap, growx");
+            jpanelGroup[groupcount].add(groupName[groupcount], "split2, wrap");
+            jpanelGroup[groupcount].revalidate();
+            jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+            jPanel3nen.repaint();
+            jPanel3nen.revalidate();
+        }
+    }//GEN-LAST:event_btnAddGroupActionPerformed
+
+    private void btnMoveDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveDownActionPerformed
+        // TODO add your handling code here:
+        int locate;
+        String wrap = null;
+        jpaneltemp.removeAll();
+        locate = 0;
+        while (jpanelOption[selectedPanel + 1].getComponentCount() > 0) {
+            if (locate == 1 || locate == 3) {
+                wrap = "wrap";
+            } else {
+                if (locate == 2) {
+                    wrap = "skip";
+                } else {
+                    if (locate == 0) {
+                        wrap = "";
+                    }
+                }
+            }
+            jpaneltemp.add(jpanelOption[selectedPanel + 1].getComponent(0), wrap);
+            locate++;
+        }
+
+        locate = 0;
+        while (jpanelOption[selectedPanel].getComponentCount() > 0) {
+            if (locate == 1 || locate == 3) {
+                wrap = "wrap";
+            } else {
+                if (locate == 2) {
+                    wrap = "skip";
+                } else {
+                    if (locate == 0) {
+                        wrap = "";
+                    }
+                }
+            }
+            jpanelOption[selectedPanel + 1].add(jpanelOption[selectedPanel].getComponent(0), wrap);
+            locate++;
+        }
+
+        locate = 0;
+        while (jpaneltemp.getComponentCount() > 0) {
+            if (locate == 1 || locate == 3) {
+                wrap = "wrap";
+            } else {
+                if (locate == 2) {
+                    wrap = "skip";
+                } else {
+                    if (locate == 0) {
+                        wrap = "";
+                    }
+                }
+            }
+            jpanelOption[selectedPanel].add(jpaneltemp.getComponent(0), wrap);
+            locate++;
+        }
+        selectedPanel = selectedPanel + 1;
+
+        jPanel3nen.revalidate();
+    }//GEN-LAST:event_btnMoveDownActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btnAddField;
+    private javax.swing.JButton btnAddGroup;
+    private javax.swing.JButton btnMoveDown;
+    private javax.swing.JButton btnMoveUp;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JPanel jPanel3nen;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void setFormData(Object objData) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+    }
+
+    @Override
+    public Object getFormData() {
+        return null;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void onLoad() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    ActionListener jCheckboxactionListener = new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            for (int i = 0; i < chkbox.length; i++) {
+                for (int j = 0; j < chkbox.length; j++) {
+
+                    if (e.getSource() == chkbox[j][i]) {
+                        //[j][i]
+                        //[j] = Group
+                        //[i] = PanelOption inside of group
+                        System.out.println("i= " + i);
+                        System.out.println("j= " + j);
+                        locateArrayI=i;
+                        locateArrayJ=j;
+                        selectedPanel=i;
+                    }
+                }
+            }
+        }
+    };
+
+    public void setControlPanel(int dataType) {
+        /**
+         * input: groupcount,[0]
+         */
+        containercount = jPanel3nen.getComponentCount();
+        
+        try {
+            if (groupcount == 0) {
+                componentcounter = jpanelGroup[groupcount].getComponentCount()-1;
+            } else {
+                componentcounter = jpanelGroup[groupcount].getComponentCount()-2;
+            }
+        } catch (Exception e) {
+            System.out.println("shit");
+        }
+        System.out.println("Component counter: " + componentcounter);
+        System.out.println("Container counter: " + containercount);
+        chkbox[groupcount][componentcounter] = new JCheckBox();
+        chkbox[groupcount][componentcounter].addActionListener(jCheckboxactionListener);
+        lb[groupcount][componentcounter] = new JLabel(hmobjectmeta.getDisplayText());
+        txtString[groupcount][componentcounter] = new TextField();
+        JButton btn = new JButton("X");
+        switch (dataType) {
+            case 1:
+                System.out.println("Group so :" + groupcount);
+                jpanelOption[containercount] = new JPanel(new MigLayout());
+                //jpanelGroup[groupcount] = new JPanel(new MigLayout());
+                txtString[groupcount][componentcounter].setPreferredSize(new Dimension(220, 27));
+                jpanelOption[containercount].setLayout(new MigLayout());
+                jpanelOption[containercount].add(chkbox[groupcount][componentcounter]);
+                jpanelOption[containercount].add(lb[groupcount][componentcounter], "wrap");
+                jpanelOption[containercount].add(txtString[groupcount][componentcounter], "skip");
+                jpanelOption[containercount].add(btn, "wrap");
+                
+                jpanelOption[containercount].revalidate();
+
+                jpanelGroup[groupcount].revalidate();
+                jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+                System.out.println("Tong so component jPanel Option trong Group [" + groupcount + "] " + jpanelGroup[groupcount].getComponentCount() + "");
+                jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+                jPanel3nen.revalidate();
+                break;
+            /*
+             case 2:
+             jpanelOption[containercount] = new JPanel();
+             jpanelGroup[groupcount] = new JPanel();
+             txtString.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(txtString, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+
+             case 3:
+             jpanelOption[containercount] = new JPanel();
+             jpanelGroup[groupcount] = new JPanel();
+             txtString.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(txtString, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+
+             break;
+
+             case 4:
+             jpanelOption[containercount] = new JPanel();
+             jpanelGroup[groupcount] = new JPanel();
+             txtString.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(txtString, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+
+             break;
+
+             case 5:
+             jpanelOption[containercount] = new JPanel();
+             jpanelGroup[groupcount] = new JPanel();
+             txtString.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(txtString, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+
+             case 6:
+             JXImageView imagebox = new org.jdesktop.swingx.JXImageView();
+             imagebox.setPreferredSize(new Dimension(220, 220));
+             JButton btnAddImage = new JButton("No Image");
+             jpanelGroup[groupcount] = new JPanel();
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(imagebox, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+
+             case 7:
+             jpanelOption[containercount] = new JPanel();
+             jpanelGroup[groupcount] = new JPanel();
+             txtString.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(txtString, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+
+             case 8:
+             jpanelOption[containercount] = new JPanel();
+             jpanelGroup[groupcount] = new JPanel();
+             txtString.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(txtString, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+
+             case 9:
+             JComboBox cbx = new JComboBox();
+             jpanelGroup[groupcount] = new JPanel();
+             cbx.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(cbx, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+
+             case 10:
+             JCheckBox chkbox = new JCheckBox();
+             jpanelGroup[groupcount] = new JPanel();
+             chkbox.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(chkbox, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+
+             case 11:
+             jpanelOption[containercount] = new JPanel();
+             jpanelGroup[groupcount] = new JPanel();
+             txtString.setPreferredSize(new Dimension(220, 27));
+             jpanelOption[containercount].setLayout(new MigLayout());
+             jpanelOption[containercount].add(chk[containercount]);
+             jpanelOption[containercount].add(lb, "wrap");
+             jpanelOption[containercount].add(txtString, "skip");
+             jpanelOption[containercount].add(btn, "wrap");
+             jpanelOption[containercount].repaint();
+             jpanelOption[containercount].revalidate();
+             jpanelGroup[groupcount].add(jpanelOption[containercount], "wrap");
+             jPanel3nen.add(jpanelGroup[groupcount], "wrap");
+             jPanel3nen.revalidate();
+             break;
+             */
+            default:
+        }
+    }
 }

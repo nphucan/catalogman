@@ -4,38 +4,58 @@
  * and open the template in the editor.
  */
 package com.homesoft.catalogman.dao;
+
 import com.homesoft.catalogman.entity.HmObjectType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
 /**
  * @company Home
  * @author Bao Nguyen
  * @createdDate Feb 6, 2015
- * @modifiedDate 
+ * @modifiedDate
  */
-public class HmObjectTypeDAO extends AbstractDAO{
+public class HmObjectTypeDAO extends AbstractDAO {
+
     private static final String SQL_CREATE = "INSERT INTO TABLE HmObjectType(Name, Description, ImageID) VALUE(?,?,?)";
-    private static final String SQL_READ = "SELECT (ID, Name, Description, ImageID) from HmObjectType";
+    private static final String SQL_READ = "SELECT ID, Name, Description, ImageID from HmObjectType";
     private static final String SQL_UPDATE = "UPDATE HmObjectType SET Name =?, Description =?, ImageID =? where ID=?";
     private static final String SQL_DELETE = "DELETE FROM HmObjectType where ID=?";
-    private static final String SQL_READ_ID = "SELECT (ID, Name, Description, ImageID) from HmObjectType WHERE ID=?";
-     
+    private static final String SQL_READ_ID = "SELECT ID, Name, Description, ImageID from HmObjectType WHERE ID=?";
+
     /**
      * Select object by Id
-    */
-    public Object selectById(int Id)  throws SQLException{
+     */
+    public String selectById(int Id, boolean Name, boolean Description, boolean ImageID) throws SQLException {
+        String name = null;
+        String description = null;
+        String imageID = null;
         Connection conn = DBConnection.getConnection();
         PreparedStatement psCommand = conn.prepareStatement(SQL_READ_ID);
         psCommand.setInt(1, Id);
         ResultSet rs = psCommand.executeQuery();
-        return rs;
+        while (rs.next()) {
+            name = rs.getString("Name");
+            description = rs.getString("Description");
+            imageID = rs.getString("ImageID");
+        }
+        if (Name) {
+            return name;
+        } else {
+            if (Description) {
+                return description;
+            } else {
+                if (ImageID) {
+                    return imageID;
+                }
+            }
+            return null;
+        }
     }
-       
-    
-    
+
     /**
      * Get list of object
      *
@@ -57,7 +77,7 @@ public class HmObjectTypeDAO extends AbstractDAO{
         }
         return lstObjectType;
     }
-    
+
     /**
      * Insert object into database
      *
@@ -74,10 +94,10 @@ public class HmObjectTypeDAO extends AbstractDAO{
         psCommand.executeUpdate();
         return getGeneratedKey(psCommand);
     }
-    
+
     /**
      * Delete object out of database
-     * 
+     *
      * @param id
      * @throws SQLException
      */
@@ -87,21 +107,22 @@ public class HmObjectTypeDAO extends AbstractDAO{
         psCommand.setInt(1, id);
         psCommand.executeUpdate();
     }
-    
+
     /**
      * Update object in database
      *
      * @param HmObjType
-     * @return 
+     * @return
      * @throws SQLException
      */
-    public int update(HmObjectType HmObjType) throws SQLException {
+    public void update(HmObjectType HmObjType) throws SQLException {
         Connection conn = DBConnection.getConnection();
         PreparedStatement psCommand = conn.prepareStatement(SQL_UPDATE);
         psCommand.setString(1, HmObjType.getName());
         psCommand.setString(2, HmObjType.getDescription());
         psCommand.setInt(3, HmObjType.getImageId());
+        psCommand.setInt(4, HmObjType.getId());
         psCommand.executeUpdate();
-        return getGeneratedKey(psCommand);
+        //return getGeneratedKey(psCommand);
     }
 }

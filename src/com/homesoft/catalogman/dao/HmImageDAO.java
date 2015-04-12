@@ -24,18 +24,28 @@ public class HmImageDAO extends AbstractDAO {
     private static final String SQL_READ = "SELECT (ID, ImageFile, Size) from HmImage";
     private static final String SQL_UPDATE = "UPDATE HmImage SET ImageFile=?,Size =? where ID=?";
     private static final String SQL_DELETE = "DELETE FROM HmImage where ID=?";
-    private static final String SQL_READ_ID = "SELECT (ID, ImageFile, Size) FROM HmImage WHERE ID=?";
+    private static final String SQL_READ_ID = "SELECT ID, ImageFile, Size FROM HmImage WHERE ID=?";
     
     /**
      * Select Object by Id
      */
     
-    public Object selectById(int Id) throws SQLException {
+    public String selectById(int Id, boolean ImageFile, boolean Size)  throws SQLException{
+       String imagefile = null;
+       String size = null;
         Connection conn = DBConnection.getConnection();
-        PreparedStatement psCommand = conn.prepareStatement(SQL_READ_ID);
+        PreparedStatement psCommand = conn.prepareStatement("SELECT ID, ImageFile, Size FROM HmImage WHERE ID=?");
         psCommand.setInt(1, Id);
         ResultSet rs = psCommand.executeQuery();
-        return rs;
+        while(rs.next()){
+            imagefile = rs.getString("ImageFile");
+            size = rs.getString("Size");
+        }
+        if(ImageFile)
+            return imagefile;
+        else if(Size)
+            return size;
+        return null;
     }
     
     /**
@@ -44,17 +54,14 @@ public class HmImageDAO extends AbstractDAO {
      * @return ArrayList
      * @throws SQLException
      */
-    public ArrayList<HmImage> select() throws SQLException {
-        ArrayList<HmImage> lstImage = new ArrayList<>();
+    public ArrayList<String> select() throws SQLException {
+        ArrayList<String> lstImage = new ArrayList<>();
         Connection conn = DBConnection.getConnection();
-        PreparedStatement psCommand = conn.prepareStatement(SQL_READ);
+        PreparedStatement psCommand = conn.prepareStatement("SELECT ID, ImageFile, Size FROM HmImage");
         ResultSet rsData = psCommand.executeQuery();
         while (rsData.next()) {
-            HmImage hmImg = new HmImage(
-                    rsData.getInt(1),
-                    rsData.getString(2),
-                    rsData.getInt(3));
-            lstImage.add(hmImg);
+            String link = rsData.getString("ImageFile");
+            lstImage.add(link);
 
         }
         return lstImage;
@@ -75,5 +82,22 @@ public class HmImageDAO extends AbstractDAO {
         psCommand.executeUpdate();
         //return generated ID of INSERT command
         return getGeneratedKey(psCommand);  
+    }
+    
+    /**
+     * Update object in database
+     *
+     * @param hmObject
+     * @return 
+     * @throws SQLException
+     */
+    public void update(HmImage hImg) throws SQLException {
+        Connection conn = DBConnection.getConnection();
+        PreparedStatement psCommand = conn.prepareStatement("UPDATE HmImage SET ImageFile=?,Size =? where ID=?");
+        psCommand.setString(1, hImg.getImageFile());
+        psCommand.setInt(2, hImg.getSize());
+        psCommand.setInt(3, hImg.getId());
+        psCommand.executeUpdate();
+        //return getGeneratedKey(psCommand);
     }
 }

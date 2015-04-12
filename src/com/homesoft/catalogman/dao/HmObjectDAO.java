@@ -9,7 +9,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 /**
  * @company Home
  * @author Bao Nguyen
@@ -18,20 +20,30 @@ import java.util.ArrayList;
  */
 public class HmObjectDAO extends AbstractDAO {
     private static final String SQL_CREATE = "INSERT INTO TABLE HmObject(Name, Description, PostID, TaxonomyID, ObjectID) VALUE(?,?,?,?,?)";
-    private static final String SQL_READ = "SELECT (ID, Name, Description, PostID, TaxonomyID, ObjectID) from HmObject";
+    private static final String SQL_READ = "SELECT ID, Name, Description, PostID, TaxonomyID, ObjectID from HmObject";
     private static final String SQL_UPDATE = "UPDATE HmObject SET Name =?, Description =?, PostID =?, TaxonomyID =?, ObjectID =? where ID=?";
     private static final String SQL_DELETE = "DELETE FROM HmObject where ID=?";
-    private static final String SQL_READ_ID = "SELECT(ID, Name, Description, PostID, TaxonomyID, ObjectID) FROM HmObject WHERE ID=? ";
+    private static final String SQL_READ_ID = "SELECT ID, Name, Description, PostID, TaxonomyID, ObjectID FROM HmObject WHERE ID=? ";
    
     /**
      * Select object by Id
     */
-    public Object selectById(int Id)  throws SQLException{
+    public String selectById(int Id, boolean Name, boolean Description, boolean Icon)  throws SQLException{
+        String objectname = null;
+        String objectdescription = null;
         Connection conn = DBConnection.getConnection();
-        PreparedStatement psCommand = conn.prepareStatement(SQL_READ_ID);
+        PreparedStatement psCommand = conn.prepareStatement("SELECT ID, Name, Description, PostID, TaxonomyID, ObjectID FROM HmObject WHERE ID=?");
         psCommand.setInt(1, Id);
         ResultSet rs = psCommand.executeQuery();
-        return rs;
+        while(rs.next()){
+            objectname = rs.getString("Name");
+            objectdescription = rs.getString("Description");
+        }
+        if(Name) {
+            return objectname;
+        }else{
+            return objectdescription;
+        }
     }
     
     
@@ -42,20 +54,22 @@ public class HmObjectDAO extends AbstractDAO {
      * @throws SQLException
      */
     public ArrayList<HmObject> select() throws SQLException {
-        ArrayList<HmObject> lstObject = new ArrayList<>();
+        ArrayList<HmObject> lstObject = new ArrayList<HmObject>();
+       try{
         Connection conn = DBConnection.getConnection();
-        PreparedStatement psCommand = conn.prepareStatement(SQL_READ);
+        PreparedStatement psCommand = conn.prepareStatement("SELECT * from HmObject");
         ResultSet rsData = psCommand.executeQuery();
         while (rsData.next()) {
-            HmObject hmObj = new HmObject(
-                    rsData.getInt(1),
-                    rsData.getString(2),
-                    rsData.getString(3),
-                    rsData.getInt(4),
-                    rsData.getInt(5),
-                    rsData.getInt(6));
-            lstObject.add(hmObj);
-
+            HmObject hmobject = new HmObject(
+                    rsData.getInt("Id"),
+                    rsData.getString("Name"),
+                    rsData.getString("Description"),
+                    rsData.getInt("PostId"),
+                    rsData.getInt("TaxonomyId"),
+                    rsData.getInt("ObjectId"));
+            lstObject.add(hmobject);
+        }}catch(Exception e) {
+            e.printStackTrace();
         }
         return lstObject;
     }

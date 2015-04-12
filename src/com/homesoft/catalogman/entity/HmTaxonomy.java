@@ -46,7 +46,14 @@ public class HmTaxonomy {
         this.imageId = imageId;
         this.deletable = deletable;
     }
-    
+    // 2015.03.13 Add to test START
+
+    public HmTaxonomy(String taxonomy) {
+        this.taxonomy = taxonomy;
+    }
+
+       
+    // 2015.03.13 Add to test END
     public int getId() {
         return id;
     }
@@ -110,4 +117,10 @@ public class HmTaxonomy {
     public void setDeletable(int deletable) {
         this.deletable = deletable;
     }
+
+    @Override
+    public String toString() {
+        return taxonomy ;
+    }
+    
 }

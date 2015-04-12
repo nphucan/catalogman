@@ -67,7 +67,7 @@
             <Component class="org.jdesktop.swingx.JXButton" name="tbFunction01">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/homesoft/catalogman/resouces/icons/data-add-icon.png"/>
+                  <Image iconType="3" name="/com/homesoft/catalogman/resources/icons/data-add-icon.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="New Item"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -84,7 +84,7 @@
             <Component class="org.jdesktop.swingx.JXButton" name="tbFunction02">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/homesoft/catalogman/resouces/icons/catalog-icon.png"/>
+                  <Image iconType="3" name="/com/homesoft/catalogman/resources/icons/catalog-icon.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Catalog"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -190,7 +190,7 @@
             <Component class="org.jdesktop.swingx.JXButton" name="tbFunction08">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/homesoft/catalogman/resouces/icons/help-icon.png"/>
+                  <Image iconType="3" name="/com/homesoft/catalogman/resources/icons/help-icon.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Help"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -207,7 +207,7 @@
             <Component class="org.jdesktop.swingx.JXButton" name="tbFunction09">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/com/homesoft/catalogman/resouces/icons/page-about-icon.png"/>
+                  <Image iconType="3" name="/com/homesoft/catalogman/resources/icons/page-about-icon.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="About"/>
                 <Property name="focusable" type="boolean" value="false"/>

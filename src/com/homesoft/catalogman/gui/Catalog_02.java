@@ -5,6 +5,30 @@
  */
 package com.homesoft.catalogman.gui;
 
+import com.homesoft.catalogman.dao.HmImageDAO;
+import com.homesoft.catalogman.dao.HmObjectDAO;
+import com.homesoft.catalogman.dao.HmObjectTypeDAO;
+import com.homesoft.catalogman.entity.HmImage;
+import com.homesoft.catalogman.entity.HmObject;
+import com.homesoft.catalogman.entity.HmObjectType;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import java.awt.Component;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+
 /**
  *
  * @author Bao Nguyen
@@ -14,8 +38,26 @@ public class Catalog_02 extends CustomPanel {
     /**
      * Creates new form Catalog_021
      */
+    private Map<String, ImageIcon> imageMap;
+    private HmObjectDAO hmobjectdao;
+    private HmObjectTypeDAO hmobjecttypedao;
+    private HmImageDAO hmimagedao;
+    private HmImage hmimage;
+    private HmObject hmobject;
+    private HmObjectType hmobjectype;
+    private String mode;
+    Connection myConn;
+    private int objectID;
+    private String iconimageid = null;
+    private String iconimagelink = null;
+    private int size;
+    private ItemHandler handler = new ItemHandler();
+
     public Catalog_02() {
+        super();
         initComponents();
+        setFormData(hmobject);
+        cbxIcon.addItemListener(handler);
     }
 
     /**
@@ -34,17 +76,20 @@ public class Catalog_02 extends CustomPanel {
         lsvCatalog = new javax.swing.JList();
         lblDetails = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        lbIcon = new javax.swing.JLabel();
+        cbxIcon = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtDescription = new javax.swing.JTextField();
         jButton2 = new javax.swing.JButton();
         jXHyperlink1 = new org.jdesktop.swingx.JXHyperlink();
         jXHyperlink2 = new org.jdesktop.swingx.JXHyperlink();
 
+        setOpaque(false);
+
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jPanel1.setOpaque(false);
 
         lblCatalog.setText("Catalog");
 
@@ -58,18 +103,28 @@ public class Catalog_02 extends CustomPanel {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        lsvCatalog.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lsvCatalogValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(lsvCatalog);
 
         lblDetails.setText("Details: ");
 
         jLabel3.setText("Icon");
 
-        jLabel4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lbIcon.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        lbIcon.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbIconMouseClicked(evt);
+            }
+        });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        cbxIcon.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxIcon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                cbxIconActionPerformed(evt);
             }
         });
 
@@ -88,6 +143,11 @@ public class Catalog_02 extends CustomPanel {
         });
 
         jXHyperlink1.setText("Edit");
+        jXHyperlink1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jXHyperlink1ActionPerformed(evt);
+            }
+        });
 
         jXHyperlink2.setText("Delete");
         jXHyperlink2.addActionListener(new java.awt.event.ActionListener() {
@@ -120,11 +180,11 @@ public class Catalog_02 extends CustomPanel {
                             .addGap(18, 18, 18)
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(lbIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGap(27, 27, 27)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jTextField1)
-                                .addComponent(jTextField2)))
+                                    .addComponent(cbxIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtName)
+                                .addComponent(txtDescription)))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGap(54, 54, 54)
                             .addComponent(jXHyperlink1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -150,21 +210,21 @@ public class Catalog_02 extends CustomPanel {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lbIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(0, 0, Short.MAX_VALUE)
-                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(cbxIcon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel3)))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(32, 32, 32)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jXHyperlink1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -191,51 +251,337 @@ public class Catalog_02 extends CustomPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+    public class ItemHandler implements ItemListener {
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        @Override
+        public void itemStateChanged(ItemEvent event) {
+            hmimagedao = new HmImageDAO();
+            String link = null;
+            try {
+                link = hmimagedao.selectById(cbxIcon.getSelectedIndex() + 1, true, false);
+                iconimagelink = link;
+                int id = cbxIcon.getSelectedIndex() + 1;
+                iconimageid = String.valueOf(id);
+            } catch (SQLException ex) {
+                Logger.getLogger(Catalog_02.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            lbIcon.setIcon(new ImageIcon(link));
+            //To change body of generated methods, choose Tools | Templates.
+        }
+
+    }
+    private void cbxIconActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxIconActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_cbxIconActionPerformed
 
     private void jXHyperlink2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jXHyperlink2ActionPerformed
-        // TODO add your handling code here:
+//Can check lai        
+// TODO add your handling code here:
+        if (jXHyperlink2.getText().equals("Delete")) {
+            int response = JOptionPane.showConfirmDialog(wParent, "Do you want to delecte this Object?", "Confirm", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (response != JOptionPane.YES_OPTION) {
+                return;
+            }
+            try {
+                hmobjecttypedao.delete(objectID);
+                hmobjectdao.delete(objectID);
+                JOptionPane.showConfirmDialog(wParent, "Catalog delected");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(wParent, "You can't delete this catalog");
+            }
+        } else {
+            if (jXHyperlink2.getText().equals("Cancel")) {
+                mode = "view";
+                mode("view");
+            }
+        }
     }//GEN-LAST:event_jXHyperlink2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         this.closeForm();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void lsvCatalogValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lsvCatalogValueChanged
+        // TODO add your handling code here:
+        mode = "view";
+        jXHyperlink1.setText("Edit");
+        mode("edit");
+        objectID = lsvCatalog.getSelectedIndex() + 1;
+        onLoad();
+    }//GEN-LAST:event_lsvCatalogValueChanged
+    /*@Update infomation
+     *@Input: objectId,iconimageid,iconimagelink,size
+     */
+    private void jXHyperlink1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jXHyperlink1ActionPerformed
+        // TODO add your handling code here:
+        
+        //mode = "edit";
+
+        if ((jXHyperlink1.getText().equals("Save"))) {
+            try {
+                hmimagedao = new HmImageDAO();
+                hmimage = new HmImage(objectID, iconimagelink, size);
+                hmobjecttypedao = new HmObjectTypeDAO();
+                hmobjectype = new HmObjectType(objectID, txtName.getText(), txtDescription.getText(), Integer.parseInt(iconimageid.trim()));
+                //hmobjecttype = new HmObjectType(objectID, mode, mode, iSignal);
+                hmobjectdao = new HmObjectDAO();
+                //hmimagedao.update(hmimage);
+                hmobjecttypedao.update(hmobjectype);
+                setFormData(hmobject);
+                mode = "view";
+                mode("view");
+            } catch (Exception e) {
+                e.printStackTrace();
+                //mode="edit";
+                //mode();
+            }
+        }if ((jXHyperlink1.getText().equals("Edit"))) {
+            mode("edit");
+        }
+    }//GEN-LAST:event_jXHyperlink1ActionPerformed
+
+    private void lbIconMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbIconMouseClicked
+        /* TODO add your handling code here:
+        if (mode.equals("edit")) {
+            JFileChooser fileChooser = new JFileChooser();
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("PNG file", "png");
+
+            StringBuilder stringbd = new StringBuilder();
+            String fileName = new String();
+            String path = null;
+
+            fileChooser.setFileFilter(filter);
+            if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                java.io.File file = fileChooser.getSelectedFile();
+                Scanner input = null;
+                try {
+                    input = new Scanner(file);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Catalog_02.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                while (input.hasNext()) {
+                    stringbd.append(input.nextLine());
+                    stringbd.append("\n");
+                }
+                fileName = file.getName();
+                path = file.getPath();
+                input.close();
+                iconimagelink = path;
+            } else {
+                try {
+                    hmimagedao = new HmImageDAO();
+                    iconimagelink = hmimagedao.selectById(Integer.parseInt(iconimageid.trim()), true, false);
+                } catch (Exception e) {
+                }
+                path = iconimagelink;
+            }
+            lbIcon.setIcon(new ImageIcon(path));
+    }//GEN-LAST:event_lbIconMouseClicked
+    */}
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdd;
+    private javax.swing.JComboBox cbxIcon;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private org.jdesktop.swingx.JXHyperlink jXHyperlink1;
     private org.jdesktop.swingx.JXHyperlink jXHyperlink2;
+    private javax.swing.JLabel lbIcon;
     private javax.swing.JLabel lblCatalog;
     private javax.swing.JLabel lblDetails;
     private javax.swing.JList lsvCatalog;
+    private javax.swing.JTextField txtDescription;
+    private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void setFormData(Object objData) {
-      // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        /**
+         * Get Catalog
+         *
+         * @Jlist lsvCatalog
+         * @return Catalog ( icon, name)
+         * @throws SQLException
+         */
+        final DefaultListModel dlmName = new DefaultListModel();
+        String[] arr = null;
+        String[] arrIcoId = null;
+        String[] arrIcoLink = null;
+        try {
+            hmobjectdao = new HmObjectDAO();
+            hmimagedao = new HmImageDAO();
+            hmobjecttypedao = new HmObjectTypeDAO();
+            arr = new String[hmobjectdao.select().size()];
+            arrIcoId = new String[hmobjecttypedao.select().size()];
+            arrIcoLink = new String[hmimagedao.select().size()];
+            
+            for (int i = 0; i < hmobjecttypedao.select().size(); i++) {
+                arr[i] = hmobjecttypedao.select().get(i).getName();
+                arrIcoId[i] = Integer.toString(hmobjecttypedao.select().get(i).getImageId());
+                arrIcoLink[i] = hmimagedao.selectById(Integer.parseInt(arrIcoId[i]), true, false);
+                dlmName.addElement(new ListEntry(arr[i], new ImageIcon(arrIcoLink[i])));
+            }
+            /*
+            for (int i = 0; i <hmobjecttypedao.select().size();i++){
+                
+            }*/
+            lsvCatalog.setModel(dlmName);
+            lsvCatalog.setCellRenderer(new ListEntryCellRenderer());
+        } catch (Exception e) {
+            e.printStackTrace();
+            //JOptionPane.showMessageDialog(wParent, "Somthing gone wrong. ERROR get object");
+        }
+
+        /**
+         * Get Icon
+         *
+         * @JCombobox cbxIcon
+         */
+        final DefaultComboBoxModel dlmIcon = new DefaultComboBoxModel();
+        String[] arrIco = null;
+        try {
+            hmimagedao = new HmImageDAO();
+            arrIco = new String[hmimagedao.select().size()];
+            for (int i = 0; i < hmimagedao.select().size(); i++) {
+                arrIco[i] = hmimagedao.select().get(i);
+                dlmIcon.addElement(new File(arrIco[i]).getName());
+            }
+            cbxIcon.setModel(dlmIcon);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(wParent, "Somthing gone wrong. ERROR get icon name");
+        }
+
     }
 
     @Override
     public Object getFormData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
+        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     @Override
     public void onLoad() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String name = null;
+        String description = null;
+        mode = "edit";
+        //Get Name, Description
+        try {
+            hmobjecttypedao = new HmObjectTypeDAO();
+            name = hmobjecttypedao.selectById(objectID, true, false, false).toString();
+            description = hmobjecttypedao.selectById(objectID, false, true, false).toString();
+            iconimageid = hmobjecttypedao.selectById(objectID, false, false, true).toString();
+        } catch (Exception e) {
+        }
+        txtName.setText(name);
+        txtDescription.setText(description);
+
+        //Get image
+        try {
+            hmimagedao = new HmImageDAO();
+            iconimagelink = hmimagedao.selectById(Integer.parseInt(iconimageid.trim()), true, false);
+        } catch (Exception e) {
+        }
+        lbIcon.setIcon(new ImageIcon(iconimagelink));
+
     }
+
+    private void mode(String Mode) {
+        switch (mode) {
+            case "edit":
+                System.out.println("Mode is edit");
+                txtName.setEnabled(true);
+                txtDescription.setEnabled(true);
+                btnAdd.setEnabled(false);
+                jXHyperlink1.setText("Save");
+                jXHyperlink2.setText("Cancel");
+                cbxIcon.setEnabled(true);
+                mode="edit";
+                break;
+            case "view":
+                jXHyperlink1.setText("Edit");
+                jXHyperlink2.setText("Delete");
+                btnAdd.setEnabled(true);
+                txtName.setEnabled(false);
+                txtDescription.setEnabled(false);
+                System.out.println("Mode is view");
+                cbxIcon.setEnabled(false);
+                mode="view";
+        }/*
+         if ((mode.equals("edit"))) {
+            
+         } else {
+         if ((mode.equals("view"))) {
+         
+         }
+         }*/
+
+    }
+
+    private int parseInt(int size) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+}
+
+/*
+    *Khoi tao ham hien thi Icon va Text trong jlist
+*/
+class ListEntry
+{
+   private String value;
+   private ImageIcon icon;
+  
+   public ListEntry(String value, ImageIcon icon) {
+      this.value = value;
+      this.icon = icon;
+   }
+  
+   public String getValue() {
+      return value;
+   }
+  
+   public ImageIcon getIcon() {
+      return icon;
+   }
+  
+   public String toString() {
+      return value;
+   }
+}
+  
+class ListEntryCellRenderer
+ extends JLabel implements ListCellRenderer
+{
+   private JLabel label;
+  
+   public Component getListCellRendererComponent(JList list, Object value,
+                                                 int index, boolean isSelected,
+                                                 boolean cellHasFocus) {
+      ListEntry entry = (ListEntry) value;
+  
+      setText(value.toString());
+      setIcon(entry.getIcon());
+   
+      if (isSelected) {
+         setBackground(list.getSelectionBackground());
+         setForeground(list.getSelectionForeground());
+      }
+      else {
+         setBackground(list.getBackground());
+         setForeground(list.getForeground());
+      }
+  
+      setEnabled(list.isEnabled());
+      setFont(list.getFont());
+      setOpaque(true);
+  
+      return this;
+   }
 }

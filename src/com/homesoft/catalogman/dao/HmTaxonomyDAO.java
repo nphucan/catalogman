@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 /**
  * @company Home
@@ -17,11 +18,11 @@ import java.util.ArrayList;
  * @modifiedDate 
  */
 public class HmTaxonomyDAO extends AbstractDAO {
-    private static final String SQL_CREATE = "INSERT INTO TABLE HmTaxonomy(Name, Taxonomy, Parent, Description, OptionNo, SortOrder, ImageID, Deletable) VALUE(?,?,?,?,?,?,?,?)";
-    private static final String SQL_READ = "SELECT (ID, Name, Description, PostID, TaxonomyID, ObjectID) from HmTaxonomy";
-    private static final String SQL_UPDATE = "UPDATE HmTaxonomy SET Name =?, Description =?, PostID =?, TaxonomyID =?, ObjectID =? where ID=?";
+    private static final String SQL_CREATE = "INSERT INTO HmTaxonomy(Taxonomy, Parent, Description, OptionNo, SortOrder, ImageID, Deletable) VALUE(?,?,?,?,?,?,?)";
+    private static final String SQL_READ = "SELECT ID, Taxonomy, Parent, Description, OptionNo, SortOrder, ImageID, Deletable from HmTaxonomy";
+    private static final String SQL_UPDATE = "UPDATE HmTaxonomy SET Taxonomy =?,ParentID=? Description =?, OptionNo =?, SortOrder =?, ImageID =?, Deletable=? where ID=?";
     private static final String SQL_DELETE = "DELETE FROM HmTaxonomy where ID=?";
-    private static final String SQL_READ_ID = "SELECT (ID, Name, Description, PostID, TaxonomyID, ObjectID) from HmTaxonomy WHERE ID=?";
+    private static final String SQL_READ_ID = "SELECT (ID, Taxonomy, Parent, Description, OptionNo, SortOrder, ImageID, Deletable) from HmTaxonomy WHERE ID=?";
     
      /**
      * Select object by Id
@@ -67,7 +68,7 @@ public class HmTaxonomyDAO extends AbstractDAO {
      * @return Generated identity number
      * @throws SQLException
      */
-    public int insert(HmTaxonomy HmTax) throws SQLException {
+    public void insert(HmTaxonomy HmTax) throws SQLException {
         Connection conn = DBConnection.getConnection();
         PreparedStatement psCommand = conn.prepareStatement(SQL_CREATE);
         psCommand.setString(1, HmTax.getTaxonomy());
@@ -79,7 +80,7 @@ public class HmTaxonomyDAO extends AbstractDAO {
         psCommand.setInt(7, HmTax.getDeletable());
         psCommand.executeUpdate();
         //return generated ID of INSERT commnad
-        return getGeneratedKey(psCommand);
+        //return getGeneratedKey(psCommand);
     }
     
     /**

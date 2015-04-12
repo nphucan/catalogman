@@ -16,6 +16,8 @@ import javax.swing.JDialog;
  */
 public class CustomDialog extends JDialog {
 
+    public static final int LOCATION_AUTO = 0;
+    public static final int LOCATION_MANUAL = 1;
     CustomPanel m_pnContent;
 
     /**
@@ -53,16 +55,27 @@ public class CustomDialog extends JDialog {
 
     /**
      * Show dialog and load data
-     *
+     * (location = AUTO)
      * @param data Data to process on dialog
      */
     public void show(Object data) {
+        this.show(data, LOCATION_AUTO);
+    }
+
+    /**
+     * Show dialog and load data
+     * @param data Data to process on dialog
+     * @param iLocation location mode (CustomDialog.LOCATION_AUTO, LOCATION_MANUAL)
+     */
+    public void show(Object data, int iLocation) {
         m_pnContent.setFormData(data);
         m_pnContent.onLoad();
         this.getContentPane().add(this.m_pnContent);
         this.pack();
-        this.setVisible(true);        
+        if (iLocation == LOCATION_AUTO) {
+            this.setLocationRelativeTo(this.getOwner());
+        }
+        this.setVisible(true);
     }
-   
-    
+
 }

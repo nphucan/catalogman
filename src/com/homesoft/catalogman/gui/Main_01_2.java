@@ -5,55 +5,142 @@
  */
 package com.homesoft.catalogman.gui;
 
+import com.homesoft.catalogman.entity.HmObjectType;
 import com.homesoft.catalogman.entity.HmTaxonomy;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.JPanel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeCellRenderer;
+import javax.swing.tree.TreePath;
 
 /**
  *
  * @author Bao Nguyen
  */
-public class Main_01_2 extends javax.swing.JPanel {
+public class Main_01_2 extends JPanel {
 
-    HmTaxonomy m_htSelectedItem;
+    Object m_htSelectedItem;
+    Map<Integer, DefaultMutableTreeNode> m_dicItem;
 
     /**
      * Creates new form Main_01_2
      */
     public Main_01_2() {
         initComponents();
+        m_dicItem = new HashMap<>();
     }
 
     /**
-     * Get selected item ID
+     * Nạp danh sách catalog
      *
-     * @return ID
+     * @param lstType
      */
-    public int getSelectedId() {
-        return m_htSelectedItem.getId();
+    public void bindCatalog(List<HmObjectType> lstType) {
+        DefaultTreeModel mDefault = (DefaultTreeModel) treeCategory.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) mDefault.getRoot();
+        root.removeAllChildren();
+        for (HmObjectType htItem : lstType) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(htItem);
+            root.add(node);
+            m_dicItem.put(-htItem.getId(), node);
+
+        }
+        treeCategory.setModel(mDefault);
+        treeCategory.setRootVisible(false);
+        treeCategory.updateUI();
     }
 
     /**
-     * Get selected item on treeview
+     * Nạp dữ liệu phân loại
+     *
+     * @param lstData Danh sách taxonomy
+     */
+    public void bindTaxonomy(List<HmTaxonomy> lstData) {
+        //TODO: sort list here
+        DefaultTreeCellRenderer cRender = new DefaultTreeCellRenderer();
+        cRender.setOpenIcon(null);
+        cRender.setClosedIcon(null);
+        cRender.setLeafIcon(null);
+        //Render.setIcon(null);
+        treeCategory.setCellRenderer(cRender);
+        DefaultTreeModel mDefault = (DefaultTreeModel) treeCategory.getModel();
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) mDefault.getRoot();
+        //root.removeAllChildren();
+        for (HmTaxonomy htItem : lstData) {
+            DefaultMutableTreeNode node = new DefaultMutableTreeNode(htItem);
+
+            //level 1 taxonomy
+            if (m_dicItem.containsKey(-htItem.getOptionNo())) {
+                m_dicItem.get(-htItem.getOptionNo()).add(node);
+                m_dicItem.put(htItem.getId(), node);
+                continue;
+            }
+
+            //taxonomy level >1
+            if (m_dicItem.containsKey(htItem.getParent())) {
+                //if there is no parent
+                //add to parent node
+                m_dicItem.get(htItem.getParent()).add(node);
+            } else {
+                root.add(node);
+                m_dicItem.put(htItem.getId(), node);
+            }
+        }
+        treeCategory.setModel(mDefault);
+        treeCategory.setRootVisible(false);
+        treeCategory.updateUI();
+    }
+
+    /**
+     * Lấy về phần tử được chọn
      *
      * @return selected object
      */
-    public HmTaxonomy getSelectedItem() {
+    public Object getSelectedItem() {
         return m_htSelectedItem;
     }
 
     /**
      * Set selected item by ID
      *
-     * @param iCateId category ID
+     * @param iCateId category ID. If iCateId less than 0, it mean that
+     * selection would be HmObjectType, otherwise selection would be HmTaxonomy
      */
     public void setSelectedItem(int iCateId) {
-        //TODO: write your code here
+        DefaultMutableTreeNode root = (DefaultMutableTreeNode) treeCategory.getModel().getRoot();
+        if (!root.children().hasMoreElements()) {
+            return;
+        }
+        Object objChild = null;
+        while ((objChild = root.children().nextElement()) != null) {
+            HmObjectType hmType = (HmObjectType) ((DefaultMutableTreeNode) objChild).getUserObject();
+            if (hmType.getId() == iCateId) {
+                treeCategory.setSelectionPath(
+                        new TreePath(((DefaultMutableTreeNode) objChild).getPath())
+                );
+            }
+        }
     }
 
+    /**
+     * Đăng ký sự kiện cho nút
+     *
+     * @param evt
+     */
     public void addButtonListener(ActionListener evt) {
         btnOK.addActionListener(evt);
     }
 
+    /**
+     * Xóa sự kiện của nút
+     *
+     * @param evt
+     */
     public void removeButtonLister(ActionListener evt) {
         btnOK.removeActionListener(evt);
     }
@@ -76,10 +163,14 @@ public class Main_01_2 extends javax.swing.JPanel {
         btnOK = new org.jdesktop.swingx.JXButton();
 
         setName("pnlSidebarContent"); // NOI18N
+        setOpaque(false);
         setLayout(new java.awt.GridBagLayout());
 
-        pnlHeader.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        pnlHeader.setBorder(null);
+        pnlHeader.setOpaque(false);
 
+        jLabel1.setFont(jLabel1.getFont());
+        jLabel1.setForeground(new java.awt.Color(245, 245, 245));
         jLabel1.setText("Catalog: ");
 
         javax.swing.GroupLayout pnlHeaderLayout = new javax.swing.GroupLayout(pnlHeader);
@@ -107,6 +198,16 @@ public class Main_01_2 extends javax.swing.JPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         add(pnlHeader, gridBagConstraints);
 
+        pnlTree.setOpaque(false);
+
+        treeCategory.setBackground(new java.awt.Color(225, 225, 225));
+        javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
+        treeCategory.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
+        treeCategory.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                treeCategoryValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(treeCategory);
 
         btnOK.setText("Apply");
@@ -140,6 +241,11 @@ public class Main_01_2 extends javax.swing.JPanel {
         add(pnlTree, gridBagConstraints);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void treeCategoryValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_treeCategoryValueChanged
+        m_htSelectedItem = ((DefaultMutableTreeNode) evt.getPath()
+                .getLastPathComponent()).getUserObject();
+    }//GEN-LAST:event_treeCategoryValueChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.jdesktop.swingx.JXButton btnOK;
@@ -149,4 +255,5 @@ public class Main_01_2 extends javax.swing.JPanel {
     private javax.swing.JPanel pnlTree;
     private javax.swing.JTree treeCategory;
     // End of variables declaration//GEN-END:variables
+
 }

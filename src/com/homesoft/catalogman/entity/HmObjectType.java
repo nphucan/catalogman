@@ -66,4 +66,11 @@ public class HmObjectType {
     public void setImageId(int imageId) {
         this.imageId = imageId;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+    
+    
 }

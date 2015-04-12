@@ -40,7 +40,7 @@ public class HmObject {
         this.taxonomyId = taxonomyId;
         this.objectId = objectId;
     }
-    
+   
     public int getId() {
         return id;
     }

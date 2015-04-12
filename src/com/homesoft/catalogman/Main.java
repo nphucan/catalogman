@@ -6,8 +6,8 @@
 package com.homesoft.catalogman;
 
 import com.homesoft.catalogman.dao.DBConnection;
+import com.homesoft.catalogman.gui.Application;
 import com.homesoft.catalogman.gui.CatalogMan;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -48,9 +48,9 @@ public class Main {
         new CatalogMan().setVisible(true);
     }
 
-    private static void readConfiguration() throws FileNotFoundException, IOException {
+    public static void readConfiguration() throws FileNotFoundException, IOException {
         FileInputStream fis = new FileInputStream(
-                new File("").getAbsolutePath() + "/config.properties"
+                Application.getAppPath() + "/config.properties"
         );  // get working direcotry + filename
         PropertyResourceBundle prb = new PropertyResourceBundle(fis);
         DBConnection.DB_CONN_STRING = prb.getString("connectionString");

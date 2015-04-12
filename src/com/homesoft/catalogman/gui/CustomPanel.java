@@ -6,7 +6,7 @@
 package com.homesoft.catalogman.gui;
 
 import java.awt.Window;
-import javax.swing.JPanel;
+import org.jdesktop.swingx.JXPanel;
 
 /**
  * @company Home
@@ -14,10 +14,18 @@ import javax.swing.JPanel;
  * @createdDate Feb 3, 2015
  * @modifiedDate
  */
-public abstract class CustomPanel extends JPanel {
+public abstract class CustomPanel extends JXPanel {
 
     protected int iSignal = 0;
     Window wParent;
+
+    public CustomPanel() {       
+           // ImagePainter imgPainter=Application.getImagePainter("background");
+//            imgPainter.setHorizontalRepeat(true);
+            //imgPainter.setVerticalRepeat(true);
+            this.setBackgroundPainter(Application.getImagePainter("background"));
+     
+    }
 
     public int getSignal() {
         return this.iSignal;

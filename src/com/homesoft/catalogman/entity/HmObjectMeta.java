@@ -49,7 +49,17 @@ public class HmObjectMeta {
         this.groupId = groupId;
         this.fieldNo = fieldNo;
     }
+     // 2015.03.13 Add to test START
+
+    public HmObjectMeta( String fieldName, String displayName,int objectTypeId) {
+        this.objectTypeId = objectTypeId;
+        this.fieldName = fieldName;
+        this.displayName = displayName;
+    }
+
+
     
+    // 2015.03.13 Add to test END
     public int getId() {
         return id;
     }
