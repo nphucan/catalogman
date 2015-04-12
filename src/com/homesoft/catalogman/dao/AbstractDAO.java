@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Class description here
  */
 package com.homesoft.catalogman.dao;
 
@@ -35,5 +33,5 @@ public abstract class AbstractDAO {
             iKey = rsGen.getInt(1);
         }
         return iKey;
-    }
+    }    
 }

@@ -1,13 +1,11 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Class description here
  */
 package com.homesoft.catalogman.gui;
 
 /**
  *
- * @author Admin
+ * @author baoan
  */
 public class About_05 extends CustomPanel{
 
